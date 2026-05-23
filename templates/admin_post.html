@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coach Post Detail | SportAI</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-orange: #ff7e1f;
+            --dark-orange: #e65100;
+            --light-orange: #ffab40;
+            --primary-black: #212121;
+            --secondary-black: #424242;
+            --light-gray: #f5f5f5;
+            --white: #ffffff;
+            --success-color: #4CAF50;
+            --warning-color: #FF9800;
+            --danger-color: #f44336;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            min-height: 100vh;
+            color: var(--primary-black);
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-orange) !important;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand i {
+            margin-right: 10px;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--white) !important;
+            margin: 0 10px;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: var(--primary-orange);
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 80%;
+            left: 10%;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary-orange) !important;
+        }
+
+        /* Main Container */
+        .main-container {
+            padding: 100px 0 50px;
+            min-height: 100vh;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%);
+            color: var(--white);
+            padding: 40px 0;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://picsum.photos/seed/post-detail/1920/300.jpg') center/cover;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .page-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .page-header h2 i {
+            margin-right: 15px;
+            color: var(--primary-orange);
+        }
+
+        .breadcrumb {
+            background: transparent;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .breadcrumb-item {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .breadcrumb-item.active {
+            color: var(--primary-orange);
+        }
+
+        .breadcrumb-item a {
+            color: var(--white);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb-item a:hover {
+            color: var(--primary-orange);
+        }
+
+        /* Post Detail Card */
+        .post-detail-card {
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .post-detail-card:hover {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .post-header {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--dark-orange) 100%);
+            color: var(--white);
+            padding: 25px 30px;
+            position: relative;
+        }
+
+        .post-header h3 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .post-header h3 i {
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+
+        .post-id-badge {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Performance Section */
+        .performance-section {
+            padding: 30px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .performance-metric {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .performance-metric:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .metric-label {
+            display: flex;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--secondary-black);
+        }
+
+        .metric-label i {
+            margin-right: 10px;
+            color: var(--primary-orange);
+            font-size: 1.3rem;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-orange);
+            display: flex;
+            align-items: center;
+        }
+
+        .metric-value i {
+            margin-left: 10px;
+            font-size: 1.2rem;
+        }
+
+        .accuracy-high {
+            color: var(--success-color) !important;
+        }
+
+        .accuracy-medium {
+            color: var(--warning-color) !important;
+        }
+
+        .accuracy-low {
+            color: var(--danger-color) !important;
+        }
+
+        /* Media Section */
+        .media-section {
+            padding: 30px;
+        }
+
+        .media-container {
+            margin-bottom: 30px;
+        }
+
+        .media-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-black);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .media-title i {
+            margin-right: 10px;
+            color: var(--primary-orange);
+        }
+
+        .media-wrapper {
+            background: var(--light-gray);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .media-wrapper video,
+        .media-wrapper img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .media-wrapper video {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .media-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--primary-orange);
+            color: var(--white);
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(255, 126, 31, 0.3);
+        }
+
+        /* No Media State */
+        .no-media {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--secondary-black);
+        }
+
+        .no-media i {
+            font-size: 4rem;
+            color: #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .no-media p {
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        /* Action Buttons */
+        .action-section {
+            padding: 30px;
+            background: var(--light-gray);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            min-width: 180px;
+        }
+
+        .btn i {
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-orange), var(--light-orange));
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(255, 126, 31, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 126, 31, 0.4);
+            color: var(--white);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, var(--secondary-black), #616161);
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(33, 33, 33, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(33, 33, 33, 0.4);
+            color: var(--white);
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, var(--success-color), #66BB6A);
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+            color: var(--white);
+        }
+
+        /* Additional Info Cards */
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .info-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary-orange);
+        }
+
+        .info-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-card h5 {
+            color: var(--primary-orange);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-card h5 i {
+            margin-right: 8px;
+        }
+
+        .info-card p {
+            color: var(--primary-black);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header h2 {
+                font-size: 2rem;
+            }
+            
+            .post-header h3 {
+                font-size: 1.5rem;
+            }
+            
+            .post-id-badge {
+                position: static;
+                margin-top: 15px;
+                display: inline-block;
+            }
+            
+            .action-section {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/admin_dashboard">
+                <i class="fas fa-running"></i> SportAI Coach
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin_dashboard">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin_users">
+                            <i class="fas fa-users"></i> Users
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin_posts">
+                            <i class="fas fa-file-alt"></i> Posts
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="container">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/admin_dashboard">Coach</a></li>
+                        <li class="breadcrumb-item"><a href="/admin_posts">Posts</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Post Detail</li>
+                    </ol>
+                </nav>
+                <h2>
+                    <i class="fas fa-file-alt"></i> 
+                    Coach — Post Detail
+                </h2>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Post Detail Card -->
+            <div class="post-detail-card" data-aos="fade-up">
+                <!-- Post Header -->
+                <div class="post-header">
+                    <h3>
+                        <i class="fas fa-dumbbell"></i> 
+                        Post Analysis
+                    </h3>
+                    <div class="post-id-badge">
+                        ID: {{ post[0] if post else 'N/A' }}
+                    </div>
+                </div>
+
+                <!-- Performance Section -->
+                <div class="performance-section">
+                    <div class="performance-metric" data-aos="fade-up" data-aos-delay="100">
+                        <div class="metric-label">
+                            <i class="fas fa-chart-line"></i> 
+                            Performance Accuracy
+                        </div>
+                        <div class="metric-value {{ 
+                            'accuracy-high' if performance_accuracy and performance_accuracy.replace('%','')|float > 80 
+                            else 'accuracy-medium' if performance_accuracy and performance_accuracy.replace('%','')|float > 50 
+                            else 'accuracy-low' 
+                        }}">
+                            {{ performance_accuracy if performance_accuracy else 'N/A' }}
+                            <i class="fas fa-{{ 
+                                'check-circle' if performance_accuracy and performance_accuracy.replace('%','')|float > 80 
+                                else 'exclamation-circle' if performance_accuracy and performance_accuracy.replace('%','')|float > 50 
+                                else 'times-circle' 
+                            }}"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Media Section -->
+                <div class="media-section">
+                    {% set played = false %}
+                    
+                    {% if annotated_file %}
+                        {% set ann_ext = annotated_file.rsplit('.',1)[-1].lower() %}
+                        {% set ann_mime = 'video/mp4' if ann_ext == 'mp4' else ('video/x-msvideo' if ann_ext == 'avi' else ('video/quicktime' if ann_ext == 'mov' else ('video/x-matroska' if ann_ext == 'mkv' else ('video/webm' if ann_ext == 'webm' else 'video/ogg' if ann_ext == 'ogg' else 'video/mp4')))) %}
+                        {% if ann_ext in ['mp4','webm','ogg','avi','mkv','mov'] %}
+                            <div class="media-container" data-aos="fade-up" data-aos-delay="200">
+                                <h4 class="media-title">
+                                    <i class="fas fa-video"></i> 
+                                    Annotated Video
+                                </h4>
+                                <div class="media-wrapper">
+                                    <video width="640" controls preload="metadata" playsinline style="background: #000;" data-filename="{{ annotated_file }}" onerror="handleVideoError(this)" onloadedmetadata="handleVideoLoaded(this)">
+                                        <source src="/video/{{ annotated_file }}" type="{{ ann_mime }}">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                    <div class="media-badge">
+                                        <i class="fas fa-sparkles"></i> AI Enhanced
+                                    </div>
+                                    <div class="video-status" id="status-ann" style="font-size: 0.9rem; color: #999; margin-top: 5px; display:none;"></div>
+                                    <div class="video-fallback" id="fallback-ann" style="margin-top: 10px; display:none;">
+                                        <small style="color: #d32f2f;">Unable to play annotated video.</small>
+                                        <br>
+                                        <a href="/static/uploads/{{ annotated_file }}" download style="color: #ff7e1f; text-decoration: none; font-weight: 500;">
+                                            <i class="fas fa-download"></i> Download Annotated
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% set played = true %}
+                        {% endif %}
+                    {% endif %}
+
+                    {% if not played and post[2] %}
+                        {% set orig_ext = post[2].rsplit('.',1)[-1].lower() %}
+                        {% set orig_mime = 'video/mp4' if orig_ext == 'mp4' else ('video/x-msvideo' if orig_ext == 'avi' else ('video/quicktime' if orig_ext == 'mov' else ('video/x-matroska' if orig_ext == 'mkv' else ('video/webm' if orig_ext == 'webm' else 'video/ogg' if orig_ext == 'ogg' else 'video/mp4')))) %}
+                        {% if orig_ext in ['mp4','webm','ogg','avi','mkv','mov'] %}
+                            <div class="media-container" data-aos="fade-up" data-aos-delay="300">
+                                <h4 class="media-title">
+                                    <i class="fas fa-film"></i> 
+                                    Original Post Video
+                                </h4>
+                                <div class="media-wrapper">
+                                    <video width="640" controls preload="metadata" playsinline style="background: #000;" data-filename="{{ post[2] }}" onerror="handleVideoError(this)" onloadedmetadata="handleVideoLoaded(this)">
+                                        <source src="/video/{{ post[2] }}" type="{{ orig_mime }}">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                    <div class="media-badge">
+                                        <i class="fas fa-play-circle"></i> Original
+                                    </div>
+                                    <div class="video-status" id="status-orig" style="font-size: 0.9rem; color: #999; margin-top: 5px; display:none;"></div>
+                                    <div class="video-fallback" id="fallback-orig" style="margin-top: 10px; display:none;">
+                                        <small style="color: #d32f2f;">Unable to play original video.</small>
+                                        <br>
+                                        <a href="/static/uploads/{{ post[2] }}" download style="color: #ff7e1f; text-decoration: none; font-weight: 500;">
+                                            <i class="fas fa-download"></i> Download Original
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% set played = true %}
+                        {% else %}
+                            <div class="media-container" data-aos="fade-up" data-aos-delay="300">
+                                <h4 class="media-title">
+                                    <i class="fas fa-image"></i> 
+                                    Original Post Media
+                                </h4>
+                                <div class="media-wrapper">
+                                    <img src="/static/uploads/{{ post[2] }}" alt="Post Media" style="max-width: 100%; height: auto;">
+                                    <div class="media-badge">
+                                        <i class="fas fa-image"></i> Image
+                                    </div>
+                                </div>
+                            </div>
+                            {% set played = true %}
+                        {% endif %}
+                    {% endif %}
+
+                    {% if not played %}
+                        <div class="no-media" data-aos="fade-up" data-aos-delay="400">
+                            <i class="fas fa-photo-video"></i>
+                            <p>No playable media found for this post.</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-section" data-aos="fade-up" data-aos-delay="500">
+                    <a href="/admin_user/{{ post[1] if post else 0 }}" class="btn btn-primary">
+                        <i class="fas fa-user"></i> 
+                        Back to User
+                    </a>
+                    <a href="/admin_chat/{{ post[1] if post else 0 }}" class="btn btn-success">
+                        <i class="fas fa-comments"></i> 
+                        Open Chat
+                    </a>
+                    <button class="btn btn-secondary" onclick="window.print()">
+                        <i class="fas fa-print"></i> 
+                        Print Report
+                    </button>
+                </div>
+            </div>
+
+            <!-- Additional Info Cards -->
+            <div class="info-cards">
+                <div class="info-card" data-aos="fade-up" data-aos-delay="600">
+                    <h5>
+                        <i class="fas fa-user"></i> 
+                        User ID
+                    </h5>
+                    <p>{{ post[1] if post else 'N/A' }}</p>
+                </div>
+                <div class="info-card" data-aos="fade-up" data-aos-delay="700">
+                    <h5>
+                        <i class="fas fa-calendar"></i> 
+                        Post Date
+                    </h5>
+                    <p>{{ post[4] if post and post|length > 4 else 'Unknown' }}</p>
+                </div>
+                <div class="info-card" data-aos="fade-up" data-aos-delay="800">
+                    <h5>
+                        <i class="fas fa-tag"></i> 
+                        Status
+                    </h5>
+                    <p>
+                        <span class="badge bg-success">
+                            <i class="fas fa-check-circle"></i> Analyzed
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS Animation JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+        
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.padding = '10px 0';
+                navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
+            } else {
+                navbar.style.padding = '15px 0';
+                navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+            }
+        });
+        
+        // Add hover effects to media elements
+        document.querySelectorAll('video, img').forEach(media => {
+            media.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.02)';
+                this.style.transition = 'transform 0.3s ease';
+            });
+            
+            media.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+        
+        // Add click effect to buttons
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Create ripple effect
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+        
+        // Performance accuracy animation
+        window.addEventListener('load', function() {
+            const metricValue = document.querySelector('.metric-value');
+            if (metricValue) {
+                const finalValue = metricValue.textContent;
+                let currentValue = 0;
+                const targetValue = parseInt(finalValue) || 0;
+                const increment = targetValue / 50;
+                
+                const timer = setInterval(() => {
+                    currentValue += increment;
+                    if (currentValue >= targetValue) {
+                        currentValue = targetValue;
+                        clearInterval(timer);
+                    }
+                    
+                    if (finalValue.includes('%')) {
+                        metricValue.innerHTML = Math.round(currentValue) + '%' + metricValue.innerHTML.substring(metricValue.innerHTML.indexOf('<'));
+                    }
+                }, 20);
+            }
+        });
+        
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + P for print
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                e.preventDefault();
+                window.print();
+            }
+            
+            // Ctrl/Cmd + U for user
+            if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
+                e.preventDefault();
+                window.location.href = '/admin_user/{{ post[1] if post else 0 }}';
+            }
+            
+            // Ctrl/Cmd + C for chat
+            if ((e.ctrlKey || e.metaKey) && e.key === 'c' && !e.shiftKey) {
+                e.preventDefault();
+                window.location.href = '/admin_chat/{{ post[1] if post else 0 }}';
+            }
+        });
+        
+        // Video error and loading handlers
+        function handleVideoError(video) {
+            const filename = video.getAttribute('data-filename');
+            let fallbackDiv = null;
+            let statusDiv = null;
+            
+            // Try to find fallback and status divs nearby
+            const parent = video.closest('.media-wrapper')?.parentElement || video.closest('.media-container');
+            if (parent) {
+                fallbackDiv = parent.querySelector('.video-fallback');
+                statusDiv = parent.querySelector('.video-status');
+            }
+            
+            if (fallbackDiv) {
+                fallbackDiv.style.display = 'block';
+            }
+            if (statusDiv) {
+                statusDiv.textContent = `Playback error for: ${filename}`;
+                statusDiv.style.display = 'block';
+            }
+            console.warn(`Video playback error: ${filename}`);
+        }
+        
+        function handleVideoLoaded(video) {
+            const filename = video.getAttribute('data-filename');
+            const parent = video.closest('.media-wrapper')?.parentElement || video.closest('.media-container');
+            if (parent) {
+                const fallbackDiv = parent.querySelector('.video-fallback');
+                const statusDiv = parent.querySelector('.video-status');
+                if (fallbackDiv) fallbackDiv.style.display = 'none';
+                if (statusDiv) statusDiv.style.display = 'none';
+            }
+            console.log(`Video loaded successfully: ${filename}`);
+        }
+        
+        // Add video play analytics
+        document.querySelectorAll('video').forEach(video => {
+            video.addEventListener('play', function() {
+                console.log('Video started playing:', this.src);
+            });
+            
+            video.addEventListener('pause', function() {
+                console.log('Video paused:', this.src);
+            });
+            
+            video.addEventListener('ended', function() {
+                console.log('Video ended:', this.src);
+            });
+        });
+    </script>
+</body>
+</html>

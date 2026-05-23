@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportAI - Analysis Results</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-orange: #ff7e1f;
+            --dark-orange: #e65100;
+            --light-orange: #ffab40;
+            --primary-black: #212121;
+            --secondary-black: #424242;
+            --light-gray: #f5f5f5;
+            --white: #ffffff;
+            --success-green: #4caf50;
+            --warning-yellow: #ffc107;
+            --info-blue: #2196f3;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--primary-black);
+            overflow-x: hidden;
+            background: linear-gradient(135deg, var(--light-gray) 0%, #e0e0e0 100%);
+            min-height: 100vh;
+        }
+        
+        /* Navigation Bar */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-orange) !important;
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar-brand i {
+            margin-right: 10px;
+        }
+        
+        .navbar-nav .nav-link {
+            color: var(--white) !important;
+            margin: 0 10px;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: var(--primary-orange);
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-nav .nav-link:hover::after {
+            width: 80%;
+            left: 10%;
+        }
+        
+        .navbar-nav .nav-link:hover {
+            color: var(--primary-orange) !important;
+        }
+        
+        .navbar-nav .nav-link.active {
+            color: var(--primary-orange) !important;
+        }
+        
+        .navbar-nav .nav-link.active::after {
+            width: 80%;
+            left: 10%;
+        }
+        
+        /* Results Section */
+        .results-section {
+            padding: 120px 0 80px;
+            min-height: 100vh;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-black);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-orange), var(--light-orange));
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        
+        .section-header p {
+            color: var(--secondary-black);
+            font-size: 1.1rem;
+            margin-top: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Results Grid */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        /* Result Card */
+        .result-card {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-orange), var(--light-orange));
+        }
+        
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(255, 126, 31, 0.1) 0%, rgba(255, 171, 64, 0.05) 100%);
+            border-bottom: 1px solid rgba(255, 126, 31, 0.2);
+        }
+        
+        .card-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-black);
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-header h3 i {
+            margin-right: 10px;
+            color: var(--primary-orange);
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        /* Media Container */
+        .media-container {
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+            background: var(--light-gray);
+            border-radius: 15px;
+            padding: 15px;
+            overflow: hidden;
+        }
+        
+        .media-container video,
+        .media-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .media-container video {
+            width: 100%;
+            max-height: 300px;
+        }
+        
+        .media-container img {
+            max-height: 250px;
+            object-fit: cover;
+        }
+        
+        .media-label {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary-orange);
+            color: var(--white);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .original-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: var(--primary-orange);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .original-link:hover {
+            color: var(--dark-orange);
+            transform: translateX(5px);
+        }
+        
+        .original-link i {
+            margin-left: 5px;
+        }
+        
+        /* Analysis Section */
+        .analysis-section {
+            background: var(--light-gray);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .analysis-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-black);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .analysis-title i {
+            margin-right: 10px;
+            color: var(--primary-orange);
+        }
+        
+        .analysis-summary {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary-orange);
+        }
+        
+        .analysis-summary strong {
+            color: var(--primary-orange);
+        }
+        
+        .analysis-points {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+        
+        .analysis-points li {
+            background: var(--white);
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            position: relative;
+            padding-left: 35px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .analysis-points li::before {
+            content: '\f058';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--success-green);
+        }
+        
+        /* Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .metric-card {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-orange);
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            font-size: 0.9rem;
+            color: var(--secondary-black);
+            font-weight: 500;
+        }
+        
+        /* Detection Counts */
+        .detection-list {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+        
+        .detection-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: var(--white);
+            margin-bottom: 8px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .detection-label {
+            font-weight: 500;
+            color: var(--primary-black);
+        }
+        
+        .detection-count {
+            background: var(--primary-orange);
+            color: var(--white);
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        /* Raw Analysis */
+        .raw-analysis {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: var(--secondary-black);
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-orange), var(--light-orange));
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(255, 126, 31, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 126, 31, 0.5);
+            color: var(--white);
+        }
+        
+        .btn-secondary {
+            background: var(--white);
+            color: var(--primary-orange);
+            border: 2px solid var(--primary-orange);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary-orange);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+        
+        .btn i {
+            margin-right: 8px;
+        }
+        
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin: 40px auto;
+            max-width: 500px;
+        }
+        
+        .no-results i {
+            font-size: 4rem;
+            color: var(--primary-orange);
+            margin-bottom: 20px;
+        }
+        
+        .no-results h3 {
+            font-size: 1.5rem;
+            color: var(--primary-black);
+            margin-bottom: 15px;
+        }
+        
+        .no-results p {
+            color: var(--secondary-black);
+            margin-bottom: 25px;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--primary-black);
+            color: var(--white);
+            padding: 60px 0 30px;
+            margin-top: 80px;
+        }
+        
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-orange);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .footer-logo i {
+            margin-right: 10px;
+        }
+        
+        .footer-links h4 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--primary-orange);
+        }
+        
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links ul li a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links ul li a:hover {
+            color: var(--primary-orange);
+            padding-left: 5px;
+        }
+        
+        .social-icons a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            margin-right: 10px;
+            color: var(--white);
+            transition: all 0.3s ease;
+        }
+        
+        .social-icons a:hover {
+            background: var(--primary-orange);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .results-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .section-header h2 {
+                font-size: 2rem;
+            }
+            
+            .results-section {
+                padding: 100px 0 60px;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-running"></i> SportAI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/upload">Upload</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Results Section -->
+    <section class="results-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Your Results</h2>
+                <p>Here are your AI-powered sports performance analysis results</p>
+            </div>
+            
+            <!-- Results Grid -->
+            <div class="results-grid">
+                <!-- Sample result cards - replace with your template logic -->
+                {% for item in data %}
+                <div class="result-card" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                    <div class="card-header">
+                        <h3>
+                            {% if item.is_video %}
+                                <i class="fas fa-video"></i> Video Analysis
+                            {% elif item.is_image %}
+                                <i class="fas fa-image"></i> Image Analysis
+                            {% else %}
+                                <i class="fas fa-file-alt"></i> Data Analysis
+                            {% endif %}
+                        </h3>
+                    </div>
+                    
+                    <div class="card-body">
+                        <!-- Media Display -->
+                        {% if item.is_video %}
+                            <div class="media-container">
+                                <span class="media-label">Annotated</span>
+                                {% set file_ext = item.file.rsplit('.',1)[-1].lower() %}
+                                {% set mime_type = 'video/mp4' if file_ext == 'mp4' else ('video/x-msvideo' if file_ext == 'avi' else ('video/quicktime' if file_ext == 'mov' else ('video/x-matroska' if file_ext == 'mkv' else ('video/webm' if file_ext == 'webm' else 'video/mp4')))) %}
+                                <video width="100%" height="auto" controls preload="metadata" playsinline style="max-width: 100%; border-radius: 8px; background: #000;">
+                                    <source src="/video/{{ item.file }}" type="{{ mime_type }}">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <div style="text-align: center; margin-top: 10px;">
+                                    <small style="color: #666;">Video: {{ item.file }}</small>
+                                </div>
+                                {% if item.original_file and item.original_file != item.file %}
+                                    <a href="/static/uploads/{{ item.original_file }}" class="original-link" style="display: block; margin-top: 10px;" download>
+                                        Download Original <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% elif item.is_image %}
+                            <div class="media-container">
+                                <span class="media-label">Annotated</span>
+                                <img src="{{ url_for('static', filename='uploads/' ~ item.file) }}" alt="Analysis Result">
+                                {% if item.original_file and item.original_file != item.file %}
+                                    <a href="{{ url_for('static', filename='uploads/' ~ item.original_file) }}" class="original-link">
+                                        View Original <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="media-container">
+                                <i class="fas fa-file" style="font-size: 3rem; color: var(--primary-orange);"></i>
+                                <p style="margin-top: 15px;">
+                                    <a href="{{ url_for('static', filename='uploads/' ~ item.file) }}" class="original-link">
+                                        Download File <i class="fas fa-download"></i>
+                                    </a>
+                                </p>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Analysis Section -->
+                        <div class="analysis-section">
+                            <h4 class="analysis-title">
+                                <i class="fas fa-brain"></i> AI Analysis
+                            </h4>
+                            
+                            {% if item.analysis %}
+                                {% if item.analysis.summary %}
+                                    <div class="analysis-summary">
+                                        <strong>Summary:</strong> {{ item.analysis.summary }}
+                                    </div>
+                                {% endif %}
+                                
+                                {% if item.analysis.points %}
+                                    <ul class="analysis-points">
+                                        {% for p in item.analysis.points %}
+                                            <li>{{ p }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                                
+                                {% if item.analysis.performance_accuracy is not none %}
+                                    <div class="metrics-grid">
+                                        <div class="metric-card">
+                                            <div class="metric-value">{{ item.analysis.performance_accuracy }}%</div>
+                                            <div class="metric-label">Performance Accuracy</div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                
+                                {% if item.analysis.best_performer %}
+                                    <div class="metrics-grid">
+                                        <div class="metric-card">
+                                            <div class="metric-value" style="font-size: 1.2rem;">{{ item.analysis.best_performer }}</div>
+                                            <div class="metric-label">Best Performer</div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                
+                                {% if item.analysis.detection_counts %}
+                                    <h5 style="margin: 20px 0 10px; color: var(--primary-black);">Detection Counts:</h5>
+                                    <ul class="detection-list">
+                                        {% for k,v in item.analysis.detection_counts.items() %}
+                                            <li>
+                                                <span class="detection-label">{{ k }}</span>
+                                                <span class="detection-count">{{ v }}</span>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            {% else %}
+                                <div class="raw-analysis">
+                                    {{ item.raw_analysis }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" onclick="downloadResult('{{ item.file }}')">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                            <button class="btn btn-secondary" onclick="shareResult('{{ item.file }}')">
+                                <i class="fas fa-share"></i> Share
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <!-- If no results -->
+                {% if not data %}
+                <div class="no-results" data-aos="fade-up">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>No Results Yet</h3>
+                    <p>Upload your sports performance data to get AI-powered analysis results.</p>
+                    <a href="/upload" class="btn btn-primary">
+                        <i class="fas fa-upload"></i> Upload Data
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="footer-logo">
+                        <i class="fas fa-running"></i> SportAI
+                    </div>
+                    <p>Empowering athletes with AI-driven performance analysis to reach their full potential.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="footer-links">
+                        <h4>Product</h4>
+                        <ul>
+                            <li><a href="/dashboard">Dashboard</a></li>
+                            <li><a href="/upload">Upload</a></li>
+                            <li><a href="/results">Results</a></li>
+                            <li><a href="/history">History</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="footer-links">
+                        <h4>Account</h4>
+                        <ul>
+                            <li><a href="/profile">Profile</a></li>
+                            <li><a href="/settings">Settings</a></li>
+                            <li><a href="/communication">Support</a></li>
+                            <li><a href="/logout">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="footer-links">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">Documentation</a></li>
+                            <li><a href="#">API</a></li>
+                            <li><a href="#">Blog</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="footer-links">
+                        <h4>Company</h4>
+                        <ul>
+                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">Careers</a></li>
+                            <li><a href="#">Press</a></li>
+                            <li><a href="#">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 SportAI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS Animation JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+        
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.padding = '10px 0';
+                navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
+            } else {
+                navbar.style.padding = '15px 0';
+                navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+            }
+        });
+        
+        // Download result function
+        function downloadResult(filename) {
+            const link = document.createElement('a');
+            link.href = '/static/uploads/' + filename;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Share result function
+        function shareResult(filename) {
+            const url = window.location.origin + '/static/uploads/' + filename;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'SportAI Analysis Result',
+                    text: 'Check out my sports performance analysis result!',
+                    url: url
+                }).then(() => {
+                    console.log('Thanks for sharing!');
+                }).catch((error) => {
+                    console.log('Error sharing:', error);
+                    // Fallback to copying to clipboard
+                    copyToClipboard(url);
+                });
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                copyToClipboard(url);
+            }
+        }
+        
+        // Copy to clipboard function
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            // Show success message
+            showNotification('Link copied to clipboard!');
+        }
+        
+        // Show notification function
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: var(--primary-orange);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 50px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                z-index: 1000;
+                animation: slideInUp 0.3s ease;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutDown 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Add slide animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInUp {
+                from {
+                    transform: translateY(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOutDown {
+                from {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateY(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

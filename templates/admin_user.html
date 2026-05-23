@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coach - User Detail | SportAI</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-orange: #ff7e1f;
+            --dark-orange: #e65100;
+            --light-orange: #ffab40;
+            --primary-black: #212121;
+            --secondary-black: #424242;
+            --light-gray: #f5f5f5;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            min-height: 100vh;
+            color: var(--primary-black);
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-orange) !important;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand i {
+            margin-right: 10px;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--white) !important;
+            margin: 0 10px;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: var(--primary-orange);
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 80%;
+            left: 10%;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary-orange) !important;
+        }
+
+        /* Main Container */
+        .main-container {
+            padding: 100px 0 50px;
+            min-height: 100vh;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%);
+            color: var(--white);
+            padding: 40px 0;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://picsum.photos/seed/admin-bg/1920/300.jpg') center/cover;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .page-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .breadcrumb {
+            background: transparent;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .breadcrumb-item {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .breadcrumb-item.active {
+            color: var(--primary-orange);
+        }
+
+        .breadcrumb-item a {
+            color: var(--white);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb-item a:hover {
+            color: var(--primary-orange);
+        }
+
+        /* User Info Card */
+        .user-info-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .user-info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-orange), var(--light-orange));
+        }
+
+        .user-info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, var(--primary-orange), var(--light-orange));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .user-details h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-black);
+            margin-bottom: 10px;
+        }
+
+        .user-details p {
+            color: var(--secondary-black);
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: linear-gradient(45deg, var(--primary-orange), var(--light-orange));
+            color: var(--white);
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .section-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-black);
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-header h3 i {
+            margin-right: 10px;
+            color: var(--primary-orange);
+        }
+
+        .section-header .badge {
+            margin-left: 15px;
+            background: var(--primary-orange);
+            color: var(--white);
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-orange), var(--light-orange));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .content-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-card:hover::before {
+            opacity: 1;
+        }
+
+        .media-container {
+            margin-bottom: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--light-gray);
+            padding: 10px;
+            text-align: center;
+        }
+
+        .media-container img,
+        .media-container video {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .analysis-text {
+            background: var(--light-gray);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-style: italic;
+            color: var(--secondary-black);
+            border-left: 3px solid var(--primary-orange);
+        }
+
+        .post-content {
+            color: var(--primary-black);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--secondary-black);
+            font-size: 0.9rem;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .message-card {
+            background: linear-gradient(135deg, #f9f9f9 0%, #f0f0f0 100%);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .message-role {
+            display: inline-block;
+            padding: 3px 10px;
+            background: var(--primary-orange);
+            color: var(--white);
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .message-time {
+            color: var(--secondary-black);
+            font-size: 0.85rem;
+        }
+
+        .message-content {
+            color: var(--primary-black);
+            line-height: 1.5;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 25px;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-orange), var(--light-orange));
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(255, 126, 31, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 126, 31, 0.4);
+            color: var(--white);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary-orange);
+            border: 2px solid var(--primary-orange);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-orange);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        .btn-sm {
+            padding: 8px 20px;
+            font-size: 0.9rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--secondary-black);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--light-gray);
+            margin-bottom: 15px;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        /* Chat Button */
+        .chat-button-container {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .chat-button {
+            background: linear-gradient(45deg, var(--primary-orange), var(--light-orange));
+            color: var(--white);
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(255, 126, 31, 0.3);
+        }
+
+        .chat-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 126, 31, 0.4);
+            color: var(--white);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header h2 {
+                font-size: 2rem;
+            }
+            
+            .user-details h3 {
+                font-size: 1.5rem;
+            }
+            
+            .section-header h3 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/admin_dashboard">
+                <i class="fas fa-running"></i> SportAI Coach
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin_dashboard">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="container">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/admin_dashboard">Coach</a></li>
+                        <li class="breadcrumb-item"><a href="/admin_users">Users</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">User Detail</li>
+                    </ol>
+                </nav>
+                <h2><i class="fas fa-user-circle"></i> User Detail</h2>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- User Info Card -->
+            <div class="user-info-card" data-aos="fade-up">
+                <div class="row align-items-center">
+                    <div class="col-md-2 text-center">
+                        <div class="user-avatar">
+                            {{ user[1][0]|upper if user and user[1] else 'U' }}
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="user-details">
+                            <h3>{{ user[1] if user and user[1] else 'Unknown User' }} 
+                                <small>({{ user[2] if user and user[2] else 'No Email' }})</small>
+                            </h3>
+                            <p><i class="fas fa-envelope"></i> {{ user[2] if user and user[2] else 'No email provided' }}</p>
+                            <span class="role-badge">
+                                <i class="fas fa-shield-alt"></i> {{ user[3] if user and user[3] else 'User' }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <a href="/admin_dashboard" class="btn btn-outline btn-sm">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Uploads Section -->
+            <div class="section-header" data-aos="fade-up" data-aos-delay="100">
+                <h3><i class="fas fa-upload"></i> Uploads</h3>
+                {% if uploads %}
+                    <span class="badge">{{ uploads|length }} items</span>
+                {% endif %}
+            </div>
+
+            {% for u in uploads %}
+                <div class="content-card" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 + 100 }}">
+                    {% if u[2] %}
+                        <div class="media-container">
+                            {% set ext = u[2].rsplit('.',1)[1].lower() %}
+                            {% set mime_type = 'video/mp4' if ext == 'mp4' else ('video/quicktime' if ext == 'mov' else ('video/x-msvideo' if ext == 'avi' else ('video/x-matroska' if ext == 'mkv' else ('video/webm' if ext == 'webm' else 'video/mp4')))) %}
+                            {% if ext in ['mp4','mov','avi','mkv','webm'] %}
+                                <video width="400" height="250" controls preload="metadata" playsinline style="background: #000;" data-filename="{{ u[2] }}" onerror="handleVideoError(this)" onloadedmetadata="handleVideoLoaded(this)">
+                                    <source src="/video/{{ u[2] }}" type="{{ mime_type }}">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <div class="video-status" id="status-{{ loop.index0 }}" style="font-size: 0.9rem; color: #999; margin-top: 5px; display:none;"></div>
+                                <div class="video-fallback" id="fallback-{{ loop.index0 }}" style="margin-top: 10px; display:none;">
+                                    <small style="color: #d32f2f;">Unable to play video directly.</small>
+                                    <br>
+                                    <a href="/static/uploads/{{ u[2] }}" download style="color: #ff7e1f; text-decoration: none; font-weight: 500;">
+                                        <i class="fas fa-download"></i> Download Original
+                                    </a>
+                                </div>
+                            {% else %}
+                                <img src="/static/uploads/{{ u[2] }}" alt="Upload" style="max-height: 250px;">
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    {% if u[3] %}
+                        <div class="analysis-text">
+                            <i class="fas fa-chart-line"></i> <strong>Analysis:</strong> {{ u[3] }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="empty-state" data-aos="fade-up">
+                    <i class="fas fa-inbox"></i>
+                    <p>No uploads found</p>
+                </div>
+            {% endfor %}
+
+            <!-- Posts Section -->
+            <div class="section-header" data-aos="fade-up" data-aos-delay="100" style="margin-top: 40px;">
+                <h3><i class="fas fa-file-alt"></i> Posts</h3>
+                {% if posts %}
+                    <span class="badge">{{ posts|length }} posts</span>
+                {% endif %}
+            </div>
+
+            {% for p in posts %}
+                <div class="content-card" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 + 100 }}">
+                    {% if p[2] %}
+                        <div class="media-container">
+                            {% set ext = p[2].rsplit('.',1)[1].lower() %}
+                            {% set mime_type = 'video/mp4' if ext == 'mp4' else ('video/quicktime' if ext == 'mov' else ('video/x-msvideo' if ext == 'avi' else ('video/x-matroska' if ext == 'mkv' else ('video/webm' if ext == 'webm' else 'video/mp4')))) %}
+                            {% if ext in ['mp4','mov','avi','mkv','webm'] %}
+                                <video width="400" height="250" controls preload="metadata" playsinline style="background: #000;" data-filename="{{ p[2] }}" onerror="handleVideoError(this)" onloadedmetadata="handleVideoLoaded(this)">
+                                    <source src="/video/{{ p[2] }}" type="{{ mime_type }}">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <div class="video-status" id="status-post-{{ loop.index0 }}" style="font-size: 0.9rem; color: #999; margin-top: 5px; display:none;"></div>
+                                <div class="video-fallback" id="fallback-post-{{ loop.index0 }}" style="margin-top: 10px; display:none;">
+                                    <small style="color: #d32f2f;">Unable to play video directly.</small>
+                                    <br>
+                                    <a href="/static/uploads/{{ p[2] }}" download style="color: #ff7e1f; text-decoration: none; font-weight: 500;">
+                                        <i class="fas fa-download"></i> Download Original
+                                    </a>
+                                </div>
+                            {% else %}
+                                <img src="/static/uploads/{{ p[2] }}" alt="Post" style="max-height: 250px;">
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    <div class="post-content">
+                        {{ p[3] if p[3] else 'No content' }}
+                    </div>
+                    <div class="post-meta">
+                        <a href="/admin_post/{{ p[0] }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-eye"></i> View Post
+                        </a>
+                        <small>
+                            <i class="fas fa-clock"></i> 
+                            {{ p[4] if p[4] else 'Unknown date' }}
+                        </small>
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty-state" data-aos="fade-up">
+                    <i class="fas fa-edit"></i>
+                    <p>No posts found</p>
+                </div>
+            {% endfor %}
+
+            <!-- Messages Section -->
+            <div class="section-header" data-aos="fade-up" data-aos-delay="100" style="margin-top: 40px;">
+                <h3><i class="fas fa-comments"></i> Messages</h3>
+                {% if messages %}
+                    <span class="badge">{{ messages|length }} messages</span>
+                {% endif %}
+            </div>
+
+            {% for m in messages %}
+                <div class="message-card" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 + 100 }}">
+                    <div class="message-header">
+                        <span class="message-role">{{ m.from_role if m.from_role else 'Unknown' }}</span>
+                        <span class="message-time">
+                            <i class="fas fa-calendar"></i> 
+                            {{ m.created_at if m.created_at else 'Unknown time' }}
+                        </span>
+                    </div>
+                    <div class="message-content">
+                        {{ m.message if m.message else 'No message content' }}
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty-state" data-aos="fade-up">
+                    <i class="fas fa-comment-slash"></i>
+                    <p>No messages found</p>
+                </div>
+            {% endfor %}
+
+            <!-- Chat Button -->
+            <div class="chat-button-container" data-aos="fade-up">
+                <a href="/admin_chat/{{ user[0] if user and user[0] else 0 }}" class="btn chat-button">
+                    <i class="fas fa-comment-dots"></i> 
+                    Open Chat with {{ user[1] if user and user[1] else 'User' }}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS Animation JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Video error and loading handlers
+        function handleVideoError(video) {
+            const filename = video.getAttribute('data-filename');
+            const idx = video.parentElement.parentElement.previousElementSibling ? video.parentElement.parentElement.previousElementSibling.textContent : 'video';
+            
+            // Find the associated fallback div
+            let fallbackDiv = null;
+            let statusDiv = null;
+            const parent = video.closest('.media-container') || video.closest('.media-wrapper')?.parentElement;
+            if (parent) {
+                fallbackDiv = parent.querySelector('.video-fallback');
+                statusDiv = parent.querySelector('.video-status');
+            } else {
+                // Find by data attribute matching
+                document.querySelectorAll('[data-filename]').forEach(el => {
+                    if (el.getAttribute('data-filename') === filename) {
+                        const cont = el.closest('.media-container');
+                        if (cont) {
+                            fallbackDiv = cont.querySelector('.video-fallback');
+                            statusDiv = cont.querySelector('.video-status');
+                        }
+                    }
+                });
+            }
+            
+            if (fallbackDiv) {
+                fallbackDiv.style.display = 'block';
+            }
+            if (statusDiv) {
+                statusDiv.textContent = `Playback error for: ${filename}`;
+                statusDiv.style.display = 'block';
+            }
+            console.warn(`Video playback error: ${filename}`);
+        }
+        
+        function handleVideoLoaded(video) {
+            const filename = video.getAttribute('data-filename');
+            const parent = video.closest('.media-container') || video.closest('.media-wrapper')?.parentElement;
+            if (parent) {
+                const fallbackDiv = parent.querySelector('.video-fallback');
+                const statusDiv = parent.querySelector('.video-status');
+                if (fallbackDiv) fallbackDiv.style.display = 'none';
+                if (statusDiv) statusDiv.style.display = 'none';
+            }
+            console.log(`Video loaded successfully: ${filename}`);
+        }
+
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+        
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.padding = '10px 0';
+                navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
+            } else {
+                navbar.style.padding = '15px 0';
+                navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+            }
+        });
+        
+        // Add interactive hover effects for cards
+        document.querySelectorAll('.content-card, .message-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>

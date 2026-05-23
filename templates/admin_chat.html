@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coach Chat | SportAI</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-orange: #ff7e1f;
+            --dark-orange: #e65100;
+            --light-orange: #ffab40;
+            --primary-black: #212121;
+            --secondary-black: #424242;
+            --light-gray: #f5f5f5;
+            --white: #ffffff;
+            --admin-color: #4CAF50;
+            --user-color: #2196F3;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            min-height: 100vh;
+            color: var(--primary-black);
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-orange) !important;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand i {
+            margin-right: 10px;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--white) !important;
+            margin: 0 10px;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: var(--primary-orange);
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 80%;
+            left: 10%;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary-orange) !important;
+        }
+
+        /* Main Container */
+        .main-container {
+            padding: 100px 0 50px;
+            min-height: 100vh;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%);
+            color: var(--white);
+            padding: 40px 0;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://picsum.photos/seed/chat-bg/1920/300.jpg') center/cover;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .page-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .page-header h2 i {
+            margin-right: 15px;
+            color: var(--primary-orange);
+        }
+
+        .user-info-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 20px;
+            border-radius: 50px;
+            margin-top: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .user-info-badge i {
+            margin-right: 8px;
+            color: var(--primary-orange);
+        }
+
+        .breadcrumb {
+            background: transparent;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .breadcrumb-item {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .breadcrumb-item.active {
+            color: var(--primary-orange);
+        }
+
+        .breadcrumb-item a {
+            color: var(--white);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb-item a:hover {
+            color: var(--primary-orange);
+        }
+
+        /* Chat Container */
+        .chat-container {
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .chat-container:hover {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--dark-orange) 100%);
+            color: var(--white);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-header h4 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-header h4 i {
+            margin-right: 10px;
+        }
+
+        .online-indicator {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .online-dot {
+            width: 10px;
+            height: 10px;
+            background: #4CAF50;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+            }
+        }
+
+        /* Messages Area */
+        .messages-area {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%);
+        }
+
+        .messages-area::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .messages-area::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .messages-area::-webkit-scrollbar-thumb {
+            background: var(--primary-orange);
+            border-radius: 10px;
+        }
+
+        .messages-area::-webkit-scrollbar-thumb:hover {
+            background: var(--dark-orange);
+        }
+
+        .message-bubble {
+            margin-bottom: 15px;
+            display: flex;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-bubble.admin {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .message-bubble.admin .message-content {
+            background: linear-gradient(135deg, var(--admin-color) 0%, #45a049 100%);
+            color: var(--white);
+            border-bottom-right-radius: 5px;
+        }
+
+        .message-bubble.user .message-content {
+            background: var(--white);
+            color: var(--primary-black);
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-meta {
+            font-size: 0.75rem;
+            margin-top: 5px;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+        }
+
+        .message-bubble.admin .message-meta {
+            justify-content: flex-end;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .message-bubble.user .message-meta {
+            color: var(--secondary-black);
+        }
+
+        .message-role {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .message-bubble.admin .message-role {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+        }
+
+        .message-bubble.user .message-role {
+            background: var(--light-orange);
+            color: var(--white);
+        }
+
+        /* Message Form */
+        .message-form {
+            padding: 20px;
+            background: var(--white);
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            resize: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 0.2rem rgba(255, 126, 31, 0.25);
+            outline: none;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 25px;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-orange), var(--light-orange));
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(255, 126, 31, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 126, 31, 0.4);
+            color: var(--white);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary-orange);
+            border: 2px solid var(--primary-orange);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-orange);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        .btn-send {
+            background: linear-gradient(45deg, var(--admin-color), #45a049);
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-send:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+            color: var(--white);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            padding: 20px;
+            background: var(--light-gray);
+            text-align: center;
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: none;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+        }
+
+        .typing-indicator.show {
+            display: flex;
+            align-items: center;
+        }
+
+        .typing-dots {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--white);
+            border-radius: 18px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            background: var(--secondary-black);
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--secondary-black);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--light-gray);
+            margin-bottom: 15px;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header h2 {
+                font-size: 2rem;
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+            
+            .chat-header h4 {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+                <a class="navbar-brand" href="/admin_dashboard">
+                <i class="fas fa-running"></i> SportAI Coach
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin_dashboard">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="container">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/admin_dashboard">Coach</a></li>
+                        <li class="breadcrumb-item"><a href="/admin_user/{{ user.id if user else 0 }}">User Detail</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Chat</li>
+                    </ol>
+                </nav>
+                <h2>
+                    <i class="fas fa-comments"></i> 
+                    Coach Chat
+                </h2>
+                <div class="user-info-badge">
+                    <i class="fas fa-user-circle"></i>
+                    Chatting with: <strong>{{ user.name if user else 'Unknown User' }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Chat Container -->
+            <div class="chat-container" data-aos="fade-up">
+                <!-- Chat Header -->
+                <div class="chat-header">
+                    <h4>
+                        <i class="fas fa-message"></i> 
+                        Messages
+                    </h4>
+                    <div class="online-indicator">
+                        <div class="online-dot"></div>
+                        <span>Active Chat</span>
+                    </div>
+                </div>
+
+                <!-- Messages Area -->
+                <div class="messages-area" id="messagesArea">
+                    {% for m in messages %}
+                        <div class="message-bubble {{ 'admin' if m.from_role in ['admin','coach'] else 'user' }}" 
+                             data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
+                            <div class="message-content">
+                                <p>{{ m.message if m.message else 'No message content' }}</p>
+                                <div class="message-meta">
+                                    <i class="fas fa-clock"></i>
+                                    {{ m.created_at if m.created_at else 'Unknown time' }}
+                                    <span class="message-role">{{ 'Coach' if m.from_role in ['admin','coach'] else (m.from_role if m.from_role else 'Unknown') }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    
+                    {% if not messages %}
+                        <div class="empty-state">
+                            <i class="fas fa-comment-slash"></i>
+                            <p>No messages yet. Start the conversation!</p>
+                        </div>
+                    {% endif %}
+
+                    <!-- Typing Indicator -->
+                    <div class="typing-indicator" id="typingIndicator">
+                        <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Message Form -->
+                <div class="message-form">
+                    <form method="POST" action="/reply_message" id="messageForm">
+                        <input type="hidden" name="user_id" value="{{ user.id if user else 0 }}">
+                        <div class="form-group">
+                            <textarea 
+                                name="msg" 
+                                class="form-control" 
+                                placeholder="Type your message here..." 
+                                rows="3" 
+                                required
+                                id="messageInput"></textarea>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="submit" class="btn btn-send">
+                                <i class="fas fa-paper-plane"></i> Send Reply
+                            </button>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle"></i> Press Enter to send, Shift+Enter for new line
+                            </small>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons" data-aos="fade-up" data-aos-delay="100">
+                <a href="/admin_user/{{ user.id if user else 0 }}" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i> Back to User Detail
+                </a>
+                <button class="btn btn-outline" onclick="clearChat()">
+                    <i class="fas fa-broom"></i> Clear Chat
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS Animation JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+        
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.padding = '10px 0';
+                navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
+            } else {
+                navbar.style.padding = '15px 0';
+                navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+            }
+        });
+        
+        // Scroll to bottom of messages
+        function scrollToBottom() {
+            const messagesArea = document.getElementById('messagesArea');
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+        
+        // Auto scroll to bottom on page load
+        window.addEventListener('load', scrollToBottom);
+        
+        // Show typing indicator when user is typing
+        const messageInput = document.getElementById('messageInput');
+        const typingIndicator = document.getElementById('typingIndicator');
+        let typingTimer;
+        
+        messageInput.addEventListener('input', function() {
+            // Show typing indicator
+            typingIndicator.classList.add('show');
+            
+            // Clear existing timer
+            clearTimeout(typingTimer);
+            
+            // Hide typing indicator after user stops typing
+            typingTimer = setTimeout(() => {
+                typingIndicator.classList.remove('show');
+            }, 1000);
+        });
+        
+        // Handle form submission
+        document.getElementById('messageForm').addEventListener('submit', function(e) {
+            // Hide typing indicator
+            typingIndicator.classList.remove('show');
+            
+            // Clear input field
+            messageInput.value = '';
+            
+            // Scroll to bottom after a short delay
+            setTimeout(scrollToBottom, 100);
+        });
+        
+        // Keyboard shortcuts
+        messageInput.addEventListener('keydown', function(e) {
+            // Send message with Enter
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById('messageForm').submit();
+            }
+        });
+        
+        // Clear chat function
+        function clearChat() {
+            if (confirm('Are you sure you want to clear the chat history?')) {
+                // This would typically make an AJAX call to clear the chat
+                alert('Chat cleared! (This is a demo - actual clearing would require backend implementation)');
+            }
+        }
+        
+        // Add hover effects to message bubbles
+        document.querySelectorAll('.message-bubble').forEach(bubble => {
+            bubble.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+            
+            bubble.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+        
+        // Simulate real-time updates (demo only)
+        setInterval(() => {
+            const onlineDot = document.querySelector('.online-dot');
+            if (onlineDot) {
+                onlineDot.style.animation = 'none';
+                setTimeout(() => {
+                    onlineDot.style.animation = 'pulse 2s infinite';
+                }, 10);
+            }
+        }, 5000);
+    </script>
+</body>
+</html>

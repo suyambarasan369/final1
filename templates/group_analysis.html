@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportAI - Group Analysis Results</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-orange: #ff7e1f;
+            --dark-orange: #e65100;
+            --light-orange: #ffab40;
+            --primary-black: #212121;
+            --secondary-black: #424242;
+            --light-gray: #f5f5f5;
+            --white: #ffffff;
+            --success-green: #4caf50;
+            --warning-yellow: #ffc107;
+            --info-blue: #2196f3;
+            --error-red: #f44336;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--primary-black);
+            overflow-x: hidden;
+            background: linear-gradient(135deg, var(--light-gray) 0%, #e0e0e0 100%);
+            min-height: 100vh;
+        }
+        
+        /* Navigation Bar */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-orange) !important;
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar-brand i {
+            margin-right: 10px;
+        }
+        
+        .navbar-nav .nav-link {
+            color: var(--white) !important;
+            margin: 0 10px;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: var(--primary-orange);
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-nav .nav-link:hover::after {
+            width: 80%;
+            left: 10%;
+        }
+        
+        .navbar-nav .nav-link:hover {
+            color: var(--primary-orange) !important;
+        }
+        
+        .navbar-nav .nav-link.active {
+            color: var(--primary-orange) !important;
+        }
+        
+        .navbar-nav .nav-link.active::after {
+            width: 80%;
+            left: 10%;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 120px 0 80px;
+            min-height: 100vh;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .page-header h2 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-black);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .page-header h2::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-orange), var(--light-orange));
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        
+        .page-header p {
+            color: var(--secondary-black);
+            font-size: 1.2rem;
+            margin-top: 20px;
+        }
+        
+        .group-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--info-blue), #64b5f6);
+            color: var(--white);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+        
+        .group-badge i {
+            margin-right: 8px;
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            border: none;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-orange), var(--light-orange));
+        }
+        
+        .card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-black);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card h3 i {
+            margin-right: 10px;
+            color: var(--primary-orange);
+        }
+        
+        /* Upload Form */
+        .upload-area {
+            border: 3px dashed var(--primary-orange);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(255, 126, 31, 0.05) 0%, rgba(255, 171, 64, 0.02) 100%);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            margin: 20px 0;
+        }
+        
+        .upload-area:hover {
+            background: linear-gradient(135deg, rgba(255, 126, 31, 0.1) 0%, rgba(255, 171, 64, 0.05) 100%);
+            border-color: var(--dark-orange);
+            transform: translateY(-2px);
+        }
+        
+        .upload-area.dragover {
+            background: linear-gradient(135deg, rgba(255, 126, 31, 0.15) 0%, rgba(255, 171, 64, 0.1) 100%);
+            border-color: var(--dark-orange);
+            transform: scale(1.02);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary-orange);
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-black);
+            margin-bottom: 10px;
+        }
+        
+        .upload-subtext {
+            color: var(--secondary-black);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .browse-btn {
+            background: linear-gradient(45deg, var(--primary-orange), var(--light-orange));
+            color: var(--white);
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 126, 31, 0.3);
+        }
+        
+        .browse-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 126, 31, 0.5);
+        }
+        
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(45deg, var(--primary-orange), var(--light-orange));
+            color: var(--white);
+            padding: 12px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 126, 31, 0.3);
+            margin-top: 15px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 126, 31, 0.5);
+        }
+        
+        /* Best Performer Card */
+        .performer-card {
+            background: linear-gradient(135deg, var(--light-gray) 0%, #e8e8e8 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .performer-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 126, 31, 0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+        
+        .trophy-icon {
+            font-size: 3rem;
+            color: var(--warning-yellow);
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(255, 193, 7, 0.5);
+        }
+        
+        .performer-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-black);
+            margin-bottom: 10px;
+        }
+        
+        .performance-label {
+            font-size: 1rem;
+            color: var(--secondary-black);
+            margin-bottom: 5px;
+        }
+        
+        .performance-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--success-green), #66bb6a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+        
+        .performance-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--success-green), #66bb6a);
+            color: var(--white);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        /* Video Player */
+        .video-container {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            background: var(--primary-black);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .video-container video {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 15px;
+        }
+        
+        .video-overlay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: var(--white);
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+        
+        .video-info {
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--light-gray);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: var(--secondary-black);
+        }
+        
+        .video-info i {
+            color: var(--info-blue);
+            margin-right: 8px;
+        }
+        
+        /* Error Message */
+        .error-message {
+            background: linear-gradient(135deg, var(--error-red), #ef5350);
+            color: var(--white);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            animation: slideIn 0.5s ease;
+        }
+        
+        .error-message i {
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+        
+        .error-message h4 {
+            margin: 0;
+            font-weight: 700;
+        }
+        
+        .error-message p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        /* No Video State */
+        .no-video {
+            text-align: center;
+            padding: 40px;
+            background: var(--light-gray);
+            border-radius: 15px;
+            color: var(--secondary-black);
+        }
+        
+        .no-video i {
+            font-size: 3rem;
+            color: var(--secondary-black);
+            opacity: 0.5;
+            margin-bottom: 15px;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .stat-card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            color: var(--primary-orange);
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-black);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--secondary-black);
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--primary-black);
+            color: var(--white);
+            padding: 60px 0 30px;
+            margin-top: 80px;
+        }
+        
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-orange);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .footer-logo i {
+            margin-right: 10px;
+        }
+        
+        .footer-links h4 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--primary-orange);
+        }
+        
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links ul li a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links ul li a:hover {
+            color: var(--primary-orange);
+            padding-left: 5px;
+        }
+        
+        .social-icons a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            margin-right: 10px;
+            color: var(--white);
+            transition: all 0.3s ease;
+        }
+        
+        .social-icons a:hover {
+            background: var(--primary-orange);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header h2 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .upload-area {
+                padding: 30px 20px;
+            }
+            
+            .performer-name {
+                font-size: 1.5rem;
+            }
+            
+            .performance-value {
+                font-size: 2rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content {
+                padding: 100px 0 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-running"></i> SportAI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/upload">Upload</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/group_upload">Group Video</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/group-analysis">Group Analysis</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/results">Results</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header" data-aos="fade-up">
+                <h2>Group Analysis</h2>
+                <p>Advanced AI-powered team performance evaluation</p>
+                <span class="group-badge">
+                    <i class="fas fa-users"></i> Team Performance
+                </span>
+            </div>
+
+            <!-- Error Message (shown conditionally) -->
+            {% if error %}
+            <div class="error-message" data-aos="fade-up">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <h4>Analysis Error</h4>
+                    <p>{{ error }}</p>
+                </div>
+            </div>
+            {% else %}
+
+            <!-- Upload Form Card -->
+            <div class="card" data-aos="fade-up" data-aos-delay="100">
+                <h3><i class="fas fa-cloud-upload-alt"></i> Upload Video for Group Analysis</h3>
+                <form action="/group_upload" method="post" enctype="multipart/form-data" id="uploadForm">
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-video upload-icon"></i>
+                        <div class="upload-text">Drag & Drop your team video here</div>
+                        <div class="upload-subtext">or click to browse files</div>
+                        <button type="button" class="browse-btn" onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-folder-open"></i> Browse Files
+                        </button>
+                        <input type="file" name="file" id="fileInput" class="file-input" accept="video/*" required>
+                    </div>
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-rocket"></i> Upload & Analyze
+                    </button>
+                </form>
+            </div>
+
+            <!-- Best Performer Card -->
+            <div class="card" data-aos="fade-up" data-aos-delay="200">
+                <h3><i class="fas fa-trophy"></i> Best Performer</h3>
+                <div class="performer-card">
+                    <i class="fas fa-trophy trophy-icon"></i>
+                    <div class="performer-name">Player {{ best_id }}</div>
+                    <div class="performance-label">Performance Accuracy</div>
+                    <div class="performance-value">{{ performance_accuracy }}%</div>
+                    <span class="performance-badge">
+                        <i class="fas fa-medal"></i> Top Performer
+                    </span>
+                </div>
+                
+                <!-- Additional Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+                        <i class="fas fa-video stat-icon"></i>
+                        <div class="stat-value">{{ ball_handling_frames or 0 }}</div>
+                        <div class="stat-label">Ball Handling Frames</div>
+                    </div>
+                    <div class="stat-card" data-aos="fade-up" data-aos-delay="400">
+                        <i class="fas fa-party-horn stat-icon"></i>
+                        <div class="stat-value">{{ celebration_count or 0 }}</div>
+                        <div class="stat-label">Celebrations</div>
+                    </div>
+                    <div class="stat-card" data-aos="fade-up" data-aos-delay="500">
+                        <i class="fas fa-star stat-icon"></i>
+                        <div class="stat-value">{{ (performance_accuracy * 0.5 + 2.5) | round(1, 'floor') }}</div>
+                        <div class="stat-label">Rating</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Player Card -->
+            <div class="card" data-aos="fade-up" data-aos-delay="300">
+                <h3><i class="fas fa-film"></i> Best Performer Annotated Video</h3>
+                {% if annotated_file %}
+                <div class="video-container">
+                    {% set file_ext = annotated_file.rsplit('.',1)[-1].lower() %}
+                    {% set mime_type = 'video/mp4' if file_ext == 'mp4' else ('video/x-msvideo' if file_ext == 'avi' else ('video/quicktime' if file_ext == 'mov' else ('video/x-matroska' if file_ext == 'mkv' else ('video/webm' if file_ext == 'webm' else 'video/mp4')))) %}
+                    <video width="100%" height="auto" controls preload="metadata" playsinline id="annotatedVideo" style="max-width: 100%; border-radius: 15px; background: #000;">
+                        <source src="/video/{{ annotated_file }}" type="{{ mime_type }}">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="video-overlay">
+                        <i class="fas fa-play-circle"></i> Best Performer
+                    </div>
+                </div>
+                <div class="video-info">
+                    <i class="fas fa-info-circle"></i>
+                    The video highlights the best performer across the uploaded clip with real-time annotations and performance metrics.
+                    <br><small style="opacity: 0.8;">File: {{ annotated_file }}</small>
+                </div>
+                {% else %}
+                <div class="no-video">
+                    <i class="fas fa-video-slash"></i>
+                    <h4>No Annotated Video Available</h4>
+                    <p>Upload a new video to generate annotated analysis</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Team Stats Card -->
+            {% if team_stats %}
+            <div class="card" data-aos="fade-up" data-aos-delay="400">
+                <h3><i class="fas fa-users"></i> Team Performance Summary</h3>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                        <thead>
+                            <tr style="background: var(--light-gray); border-bottom: 2px solid var(--primary-orange);">
+                                <th style="padding: 12px; text-align: left; font-weight: 600;">Player</th>
+                                <th style="padding: 12px; text-align: center; font-weight: 600;">Ball Handling Frames</th>
+                                <th style="padding: 12px; text-align: center; font-weight: 600;">Celebrations</th>
+                                <th style="padding: 12px; text-align: center; font-weight: 600;">Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stat in team_stats %}
+                            <tr style="border-bottom: 1px solid #e0e0e0; {% if stat.is_best %}background: rgba(255, 126, 31, 0.05);{% endif %}">
+                                <td style="padding: 12px; font-weight: {% if stat.is_best %}700{% else %}500{% endif %};">
+                                    <i class="fas fa-running" style="color: var(--primary-orange); margin-right: 8px;"></i>Player {{ stat.player_id }}
+                                    {% if stat.is_best %}<span style="background: var(--primary-orange); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; margin-left: 8px;">Best</span>{% endif %}
+                                </td>
+                                <td style="padding: 12px; text-align: center;">{{ stat.ball_handling_frames }}</td>
+                                <td style="padding: 12px; text-align: center;">
+                                    <span style="background: #fff3e0; color: #f57c00; padding: 4px 12px; border-radius: 15px; font-weight: 600;">{{ stat.celebrations }}</span>
+                                </td>
+                                <td style="padding: 12px; text-align: center; font-weight: 700; color: var(--primary-orange);">{{ stat.score }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: var(--light-gray); border-radius: 10px; font-size: 0.9rem;">
+                    <i class="fas fa-info-circle" style="color: var(--info-blue); margin-right: 8px;"></i>
+                    <strong>Scoring Formula:</strong> (Ball Handling Frames × Avg Confidence) + (Celebrations × 3.0)
+                </div>
+            </div>
+            {% endif %}
+
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="footer-logo">
+                        <i class="fas fa-running"></i> SportAI
+                    </div>
+                    <p>Empowering athletes with AI-driven performance analysis to reach their full potential.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="footer-links">
+                        <h4>Product</h4>
+                        <ul>
+                            <li><a href="/dashboard">Dashboard</a></li>
+                            <li><a href="/upload">Upload</a></li>
+                            <li><a href="/group_upload">Group Video</a></li>
+                            <li><a href="/results">Results</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="footer-links">
+                        <h4>Account</h4>
+                        <ul>
+                            <li><a href="/profile">Profile</a></li>
+                            <li><a href="/settings">Settings</a></li>
+                            <li><a href="/communication">Support</a></li>
+                            <li><a href="/logout">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="footer-links">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">Documentation</a></li>
+                            <li><a href="#">API</a></li>
+                            <li><a href="#">Blog</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="footer-links">
+                        <h4>Company</h4>
+                        <ul>
+                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">Careers</a></li>
+                            <li><a href="#">Press</a></li>
+                            <li><a href="#">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 SportAI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS Animation JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+        
+        // File upload handling
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const uploadForm = document.getElementById('uploadForm');
+        
+        // Drag and drop events
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type.startsWith('video/')) {
+                fileInput.files = files;
+                updateUploadArea(files[0]);
+            } else {
+                showNotification('Please upload a valid video file', 'error');
+            }
+        });
+        
+        // File input change event
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                updateUploadArea(e.target.files[0]);
+            }
+        });
+        
+        // Update upload area display
+        function updateUploadArea(file) {
+            document.querySelector('.upload-text').textContent = file.name;
+            document.querySelector('.upload-subtext').textContent = formatFileSize(file.size);
+            document.querySelector('.browse-btn').style.display = 'none';
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+        
+        // Form submission
+        uploadForm.addEventListener('submit', (e) => {
+            const submitBtn = uploadForm.querySelector('.submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+        });
+        
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            
+            if (type === 'error') {
+                notification.style.background = 'var(--error-red)';
+            } else if (type === 'success') {
+                notification.style.background = 'var(--success-green)';
+            } else {
+                notification.style.background = 'var(--primary-orange)';
+            }
+            
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                color: white;
+                padding: 15px 25px;
+                border-radius: 50px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                z-index: 1000;
+                animation: slideInUp 0.3s ease;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutDown 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Add slide animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInUp {
+                from {
+                    transform: translateY(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOutDown {
+                from {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateY(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Video player enhancements
+        const video = document.getElementById('annotatedVideo');
+        if (video) {
+            video.addEventListener('play', () => {
+                document.querySelector('.video-overlay').style.display = 'none';
+            });
+            
+            video.addEventListener('pause', () => {
+                document.querySelector('.video-overlay').style.display = 'block';
+            });
+            
+            video.addEventListener('ended', () => {
+                document.querySelector('.video-overlay').style.display = 'block';
+            });
+        }
+        
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.padding = '10px 0';
+                navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
+            } else {
+                navbar.style.padding = '15px 0';
+                navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+            }
+        });
+        
+        // Animate performance value on load
+        window.addEventListener('load', () => {
+            const perfValue = document.querySelector('.performance-value');
+            if (perfValue) {
+                const targetValue = parseInt(perfValue.textContent);
+                let currentValue = 0;
+                const increment = targetValue / 50;
+                const timer = setInterval(() => {
+                    currentValue += increment;
+                    if (currentValue >= targetValue) {
+                        currentValue = targetValue;
+                        clearInterval(timer);
+                    }
+                    perfValue.textContent = Math.round(currentValue) + '%';
+                }, 20);
+            }
+        });
+    </script>
+</body>
+</html>
